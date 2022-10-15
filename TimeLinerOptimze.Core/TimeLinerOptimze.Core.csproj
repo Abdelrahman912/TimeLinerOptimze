@@ -10,7 +10,16 @@
     <Folder Include="Dtos\" />
     <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="29.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CSharp.Functional">
+      <HintPath>..\Libs\CSharp.Functional\CSharp.Functional.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
