@@ -11,6 +11,7 @@ namespace TimeLinerOptimze.Core.Loggers
         private readonly string _fileName = "TimeLinerOptimizeLog";
         private readonly IRepository<T> _repository;
         private readonly string _fullPath;
+
         #endregion
 
         #region Properties
