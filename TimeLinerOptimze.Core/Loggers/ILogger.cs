@@ -1,7 +1,7 @@
 ﻿namespace TimeLinerOptimze.Core.Loggers
 {
-    public interface ILogger
+    public interface ILogger<T> where T : class
     {
-        void Log<T>(T t) where T : class;
+        void Log(T t);
     }
 }

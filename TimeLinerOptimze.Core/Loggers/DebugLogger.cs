@@ -2,9 +2,9 @@
 
 namespace TimeLinerOptimze.Core.Loggers
 {
-    public class DebugLogger : ILogger
+    public class DebugLogger<T> : ILogger<T> where T : class
     {
-        public void Log<T>(T t) where T : class
+        public void Log(T t) 
         {
             Debug.WriteLine(t.ToString());
         }

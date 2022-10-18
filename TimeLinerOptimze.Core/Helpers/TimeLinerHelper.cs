@@ -2,6 +2,7 @@
 using TimeLinerOptimze.Core.Extensions;
 using TimeLinerOptimze.Core.Models.TimeLiner;
 using System.Linq;
+using System.Text;
 
 namespace TimeLinerOptimze.Core.Helpers
 {
@@ -61,6 +62,16 @@ namespace TimeLinerOptimze.Core.Helpers
             };
             return timeLine;
         }
+
+        public static string GetChromosomeCode(this TimeLine timeLine)
+        {
+            var chm = timeLine.Activities
+                     .Aggregate(new StringBuilder(), (soFar, current) => soFar.Append($"{current.UsedGroups},"))
+                     .ToString()
+                     .TrimEnd(',');
+            return chm;
+        }
+
 
     }
 }

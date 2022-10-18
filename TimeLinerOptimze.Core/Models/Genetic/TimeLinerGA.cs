@@ -1,5 +1,6 @@
 ﻿using CSharp.Functional.Extensions;
 using GeneticSharp;
+using TimeLinerOptimze.Core.Dtos;
 using TimeLinerOptimze.Core.Extensions;
 using TimeLinerOptimze.Core.Helpers;
 using TimeLinerOptimze.Core.Loggers;
@@ -10,7 +11,7 @@ namespace TimeLinerOptimze.Core.Models.Genetic
     public class TimeLinerGA : ITimelinerGA
     {
         #region Private Fields
-        private readonly ILogger _logger;
+        private readonly ILogger<GaTimeLineDto> _logger;
         private readonly int _noActivities;
         private readonly IDictionary<int, Activity> _databaseDict;
         private readonly IDictionary<int, List<Activity>> _predecessorsCache;
@@ -28,7 +29,7 @@ namespace TimeLinerOptimze.Core.Models.Genetic
 
         public TimeLinerGA(TimeLine initialTimeLine,
                            GaInput input,
-                           ILogger logger )
+                           ILogger<GaTimeLineDto> logger )
         {
             InitialTimeLine = initialTimeLine;
             Input = input;
@@ -88,10 +89,12 @@ namespace TimeLinerOptimze.Core.Models.Genetic
                                     .AsActivities(InitialTimeLine,getPredecessors)
                                     .AsTimeLine();
                 timeLines.Add(bestTimeLine);
-                var timeLineGa = new GaTimeLine()
+                var timeLineGa = new GaTimeLineDto()
                 {
-                    TimeLine = bestTimeLine,
                     GenerationNumber = genNumber,
+                    Chromosome = bestTimeLine.GetChromosomeCode(),
+                    TotalCost = bestTimeLine.TotalCost,
+                    TotalDuration = bestTimeLine.TotalDuration,
                     Fitness = ga.Fitness.Evaluate(ga.BestChromosome)
                 };
                 _logger?.Log(timeLineGa);
