@@ -1,10 +1,38 @@
-﻿using TimeLinerOptimze.Core.Dtos;
+﻿using System.Text;
+using TimeLinerOptimze.Core.Dtos;
 using TimeLinerOptimze.Core.Models.TimeLiner;
 
 namespace TimeLinerOptimze.Core.Helpers
 {
     public static class DtoHelper
     {
+
+        public static ActivityDto AsDto(this Activity activity)
+        {
+            var preds = activity.Predecessors.Aggregate(new StringBuilder(), (soFar, current) => soFar.Append($"{current};"))
+                                .ToString()
+                                .TrimEnd(';');
+            var successors = activity.Successors.Aggregate(new StringBuilder(), (soFar, current) => soFar.Append($"{current};"))
+                                                  .ToString()
+                                                  .TrimEnd(';');
+            return new ActivityDto()
+            {
+                Number = activity.Number,
+                Name = activity.Name,
+                ActivityType = activity.ActivityType,
+                LevelNumber = activity.LevelNumber,
+                Duration = activity.Duration,
+                StartDate = activity.StartDate,
+                FinishDate = activity.FinishDate,
+                Crew = activity.Crew,
+                CrewCost = activity.CrewCost,
+                UsedGroups = activity.UsedGroups,
+                Predecessors = preds,
+                Successors = successors,
+                Quantity = activity.Quantity,
+            };
+        }
+
         public static Activity AsActivity(this ActivityDto dto)
         {
             var preds = dto.Predecessors.Split(';').ToList();
