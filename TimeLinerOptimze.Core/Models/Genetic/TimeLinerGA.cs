@@ -1,5 +1,6 @@
 ﻿using CSharp.Functional.Extensions;
 using GeneticSharp;
+using TimeLinerOptimze.Core.Extensions;
 using TimeLinerOptimze.Core.Helpers;
 using TimeLinerOptimze.Core.Loggers;
 using TimeLinerOptimze.Core.Models.TimeLiner;
@@ -27,7 +28,7 @@ namespace TimeLinerOptimze.Core.Models.Genetic
 
         public TimeLinerGA(TimeLine initialTimeLine,
                            GaInput input,
-                           ILogger logger)
+                           ILogger logger )
         {
             InitialTimeLine = initialTimeLine;
             Input = input;
@@ -65,10 +66,7 @@ namespace TimeLinerOptimze.Core.Models.Genetic
             {
                 var fc = c as FloatingPointChromosome;
 
-                var acts = fc.ToFloatingPoints()
-                               .Select((v,i)=>Tuple.Create(InitialTimeLine.Activities[i], new ActivityOptimizeValue() { Name = InitialTimeLine.Activities[i].Name,UsedGroups = (int)v }))
-                               .Select(tup => tup.Item1.AsNewActivity(tup.Item2,getPredecessors(tup.Item1)))
-                               .ToList();
+                var acts = fc!.AsActivities(InitialTimeLine, getPredecessors);
                 var totalTime = acts.GetTotalTime();
                 var totalCost = acts.GetTotalCost();
                 var fitnessValue = totalTime * totalCost;
@@ -80,12 +78,26 @@ namespace TimeLinerOptimze.Core.Models.Genetic
             var termination = new FitnessStagnationTermination(Input.GenerationNo);
             var ga = new GeneticAlgorithm(population, fitness, selection, crossOver, mutation);
             ga.Termination = termination;
+
+            var timeLines = new List<TimeLine>();
+
             ga.GenerationRan += (sender, e) =>
             {
-
+                var genNumber = ga.GenerationsNumber;
+                var bestTimeLine = (ga.BestChromosome as FloatingPointChromosome)!
+                                    .AsActivities(InitialTimeLine,getPredecessors)
+                                    .AsTimeLine();
+                timeLines.Add(bestTimeLine);
+                var timeLineGa = new GaTimeLine()
+                {
+                    TimeLine = bestTimeLine,
+                    GenerationNumber = genNumber,
+                    Fitness = ga.Fitness.Evaluate(ga.BestChromosome)
+                };
+                _logger?.Log(timeLineGa);
             };
             ga.Start();
-            throw new NotImplementedException();
+            return timeLines;
         }
 
         private List<Activity> GetPredecessors(Activity activity)

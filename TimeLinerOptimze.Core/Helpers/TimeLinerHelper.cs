@@ -49,5 +49,18 @@ namespace TimeLinerOptimze.Core.Helpers
             return numberOfDays;
         }
 
+        public static TimeLine AsTimeLine(this List<Activity> activities)
+        {
+            var timeLine = new TimeLine()
+            {
+                Activities = activities,
+                StartDate = activities.First().StartDate,
+                FinishDate = activities.Last().FinishDate,
+                TotalCost = activities.GetTotalCost(),
+                TotalDuration = activities.GetTotalTime()
+            };
+            return timeLine;
+        }
+
     }
 }

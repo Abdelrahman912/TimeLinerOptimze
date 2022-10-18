@@ -6,7 +6,7 @@
 
         public int TotalDuration { get; init; }
 
-        public int TotalCost { get; init; }
+        public double TotalCost { get; init; }
 
         public DateTime StartDate { get; init; }
 
