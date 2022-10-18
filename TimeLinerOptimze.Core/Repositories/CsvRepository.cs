@@ -1,8 +1,6 @@
 ﻿using CSharp.Functional.Constructs;
 using CsvHelper;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using static CSharp.Functional.Extensions.ValidationExtension;
 using static TimeLinerOptimze.Core.Errors.Errors;
 
@@ -36,8 +34,6 @@ namespace TimeLinerOptimze.Core.Repositories
         {
             try
             {
-                //string csvFilePath = $"{directory}\\{fileName}.csv";
-
                 using (var writer = new StreamWriter(filePath))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
