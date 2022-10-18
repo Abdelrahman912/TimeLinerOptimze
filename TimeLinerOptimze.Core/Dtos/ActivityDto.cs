@@ -10,7 +10,7 @@
         public DateTime StartDate { get; init; }
         public DateTime FinishDate { get; init; }
         public string Crew { get; init; }
-        public double CrewCost { get; init; }
+        public double Cost { get; init; }
         public int UsedGroups { get; init; }
         public string Predecessors { get; init; }
         public string Successors { get; init; }

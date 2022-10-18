@@ -22,7 +22,7 @@ namespace TimeLinerOptimze.Core.Helpers
             {
                 newStart = predecessors.OrderByDescending(act => act.FinishDate).First().FinishDate.AddDays(1);
             }
-            newEnd = newStart.AddDays(newDuration-1);
+            newEnd = newStart.AddDays(newDuration);
             var newActivity = initial with
             {
                 Duration = newDuration,

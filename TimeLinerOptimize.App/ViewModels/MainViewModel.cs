@@ -6,7 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using TimeLinerOptimize.App.ViewModels.Base;
 using TimeLinerOptimze.Core.Dtos;
 using TimeLinerOptimze.Core.Helpers;
@@ -116,18 +118,14 @@ namespace TimeLinerOptimize.App.ViewModels
             try
             {
                 IsRunningGA = true;
-                var dtosValidation = await _repository.Read<ActivityDto>(InitialTimeLinePath);
-                var logger = IsLog ? new CsvLogger<GaTimeLineDto>(LogDirectory, _repository) : null;
-                var task = from dtos in dtosValidation
-                           select dtos.Select(dto => dto.AsActivity()).ToList().AsTimeLine();
-
-                task.Map(async timeLine =>
-                {
-                    var allLines = await Task.Run(() => new TimeLinerGA(timeLine, new GaInput(), logger).RunGA());
-                    var bestThree = new List<Tuple<string, TimeLine>>() { Tuple.Create("Optimized", allLines.OrderBy(l => l.TotalCost * l.TotalDuration).First()), Tuple.Create("Optimized For Cost", allLines.OrderBy(l => l.TotalCost).First()), Tuple.Create("Optimized For Duration", allLines.OrderBy(l => l.TotalDuration).First()) };
-                    var allTasks = bestThree.AsParallel().Select(tuple => _repository.Write(tuple.Item2.Activities.Select(a=>a.AsDto()).ToList(), tuple.Item1)).ToArray();
-                    Task.WaitAll(allTasks);
-                }).Match((errs) => MessageBox.Show(errs.First().Message), (_) => MessageBox.Show("Optimized TimeLines are saved successfully."));
+                var logger = IsLog ? new TextFileLogger(LogDirectory) : null;
+                var task = from dtos in _repository.Read<ActivityDto>(InitialTimeLinePath)
+                           from timeLines in dtos.Map(i => i.Select(dto => dto.AsActivity()).ToList().AsTimeLine()).Async()
+                           from allLinesV in Task.Run(() => timeLines.Bind(timeLine => new TimeLinerGA(timeLine, new GaInput(), logger).RunGA()))
+                           from bestThree in allLinesV.Map(allLines => new List<Tuple<string, TimeLine>>() { Tuple.Create("Optimized", allLines.OrderBy(l => l.TotalCost * l.TotalDuration).First()), Tuple.Create("Optimized For Cost", allLines.OrderBy(l => l.TotalCost).First()), Tuple.Create("Optimized For Duration", allLines.OrderBy(l => l.TotalDuration).First()) }).Async()
+                           from result in bestThree.TraverseBind( b3 =>  Task.WhenAll(b3.Select(tuple => _repository.Write(tuple.Item2.Activities.Select(a => a.AsDto()).ToList(), $"{OutputDirectory}\\{tuple.Item1}"))).Map(vs=>vs.TraverseHarvest(v=>v)))
+                           select result.Match((errs) => MessageBox.Show(errs.First().Message), (_) => MessageBox.Show("Optimized TimeLines are saved successfully.")); ;
+                
                 IsRunningGA = false;
             }
             catch (Exception e)
@@ -135,7 +133,7 @@ namespace TimeLinerOptimize.App.ViewModels
                 IsRunningGA = false;
                 Debug.WriteLine(e.Message);
             }
-            
+
         }
 
         private void OnLogDirectory()

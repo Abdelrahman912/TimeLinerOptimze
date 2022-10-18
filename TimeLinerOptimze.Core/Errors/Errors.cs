@@ -10,5 +10,8 @@
 
         public static CannotWriteToFileError CannotWriteToFile(string filePath) =>
             new CannotWriteToFileError(filePath);
+
+        public static GeneticError GeneticError =>
+            new GeneticError();
     }
 }

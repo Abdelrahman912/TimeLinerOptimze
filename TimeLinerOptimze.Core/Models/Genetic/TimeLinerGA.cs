@@ -1,10 +1,12 @@
-﻿using CSharp.Functional.Extensions;
+﻿using CSharp.Functional.Constructs;
+using CSharp.Functional.Extensions;
 using GeneticSharp;
 using TimeLinerOptimze.Core.Dtos;
 using TimeLinerOptimze.Core.Extensions;
 using TimeLinerOptimze.Core.Helpers;
 using TimeLinerOptimze.Core.Loggers;
 using TimeLinerOptimze.Core.Models.TimeLiner;
+using static TimeLinerOptimze.Core.Errors.Errors;
 
 namespace TimeLinerOptimze.Core.Models.Genetic
 {
@@ -43,14 +45,14 @@ namespace TimeLinerOptimze.Core.Models.Genetic
 
         #region Methods
 
-        public List<TimeLine> RunGA()
+        private List<TimeLine> Run()
         {
-            var minVals = Enumerable.Range(1, _noActivities).Select(i => 0.0).ToArray();
+            var minVals = Enumerable.Range(1, _noActivities).Select(i => 1.0).ToArray();
             var maxVals = Enumerable.Range(1, _noActivities).Select(i => 3.0).ToArray();
             var bits = Enumerable.Range(1, _noActivities).Select(i => 2).ToArray();
             var fraction = Enumerable.Range(1, _noActivities).Select(i => 0).ToArray();
 
-            var chm = new FloatingPointChromosome(minVals,maxVals,bits,fraction);
+            var chm = new FloatingPointChromosome(minVals, maxVals, bits, fraction);
             var population = new Population(Input.PopulationNo, Input.PopulationNo, chm);
 
             Func<Activity, List<Activity>> getPredecessors = (act) =>
@@ -86,7 +88,7 @@ namespace TimeLinerOptimze.Core.Models.Genetic
             {
                 var genNumber = ga.GenerationsNumber;
                 var bestTimeLine = (ga.BestChromosome as FloatingPointChromosome)!
-                                    .AsActivities(InitialTimeLine,getPredecessors)
+                                    .AsActivities(InitialTimeLine, getPredecessors)
                                     .AsTimeLine();
                 timeLines.Add(bestTimeLine);
                 var timeLineGa = new GaTimeLineDto()
@@ -101,6 +103,20 @@ namespace TimeLinerOptimze.Core.Models.Genetic
             };
             ga.Start();
             return timeLines;
+        }
+
+        public Validation<List<TimeLine>> RunGA()
+        {
+            try
+            {
+                var result = Run();
+                return result;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+                return GeneticError;
+            }
         }
 
         private List<Activity> GetPredecessors(Activity activity)

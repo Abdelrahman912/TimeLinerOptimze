@@ -1,4 +1,5 @@
-﻿using TimeLinerOptimze.Core.Models.TimeLiner;
+﻿using CSharp.Functional.Constructs;
+using TimeLinerOptimze.Core.Models.TimeLiner;
 
 namespace TimeLinerOptimze.Core.Models.Genetic
 {
@@ -6,6 +7,6 @@ namespace TimeLinerOptimze.Core.Models.Genetic
     {
         public TimeLine InitialTimeLine { get; }
         public GaInput Input { get; }
-        List<TimeLine> RunGA();
+        Validation<List<TimeLine>> RunGA();
     }
 }
