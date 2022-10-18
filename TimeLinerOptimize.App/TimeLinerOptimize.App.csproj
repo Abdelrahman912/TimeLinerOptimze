@@ -5,16 +5,26 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+      <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="UI\Converters\" />
-    <Folder Include="UI\Services\" />
     <Folder Include="UI\Windows\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TimeLinerOptimze.Core\TimeLinerOptimze.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CSharp.Functional">
+      <HintPath>..\Libs\CSharp.Functional\CSharp.Functional.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

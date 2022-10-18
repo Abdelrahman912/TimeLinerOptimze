@@ -26,9 +26,9 @@
                         <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox IsEnabled="False" Text="{Binding InitialTimePath}"/>
+                    <TextBox IsEnabled="False" Text="{Binding InitialTimeLinePath}"/>
                     <Button Grid.Column="1" Width="25" Height="25" VerticalAlignment="Bottom" 
-                            Command="{Binding DataContext.ExportCommand,  RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                            Command="{Binding InitialTimeLineCommand}" 
                         HorizontalAlignment="Center" Margin="5 0"
               Style="{DynamicResource MaterialDesignFloatingActionAccentButton}">
                         <materialDesign:PackIcon Kind="FileImport"  VerticalAlignment="Center" Width="15" Height="15" />
@@ -49,9 +49,9 @@
                         <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox IsEnabled="False" Text="{Binding InitialTimePath}"/>
+                    <TextBox IsEnabled="False" Text="{Binding OutputDirectory}"/>
                     <Button Grid.Column="1" Width="25" Height="25" VerticalAlignment="Bottom" 
-                            Command="{Binding DataContext.ExportCommand,  RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                            Command="{Binding OutputDirectoryCommand}" 
                         HorizontalAlignment="Center" Margin="5 0"
               Style="{DynamicResource MaterialDesignFloatingActionAccentButton}">
                         <materialDesign:PackIcon Kind="FileExport"  VerticalAlignment="Center" Width="15" Height="15" />
@@ -74,9 +74,9 @@
                             <ColumnDefinition Width="10*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox IsEnabled="False" Text="{Binding InitialTimePath}"/>
+                        <TextBox IsEnabled="False" Text="{Binding LogDirectory}"/>
                         <Button Grid.Column="1" Width="25" Height="25" VerticalAlignment="Bottom" 
-                            Command="{Binding DataContext.ExportCommand,  RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                            Command="{Binding LogDirectoryCommand}" 
                         HorizontalAlignment="Center" Margin="5 0"
               Style="{DynamicResource MaterialDesignFloatingActionAccentButton}">
                             <materialDesign:PackIcon Kind="FileExport"  VerticalAlignment="Center" Width="15" Height="15" />
@@ -85,7 +85,8 @@
                 </Grid>
             </GroupBox>
 
-            <Button Margin="10" Grid.Row="3" Width="150" Content="Run Genetic"/>
+            <Button Margin="10" Grid.Row="3" Command="{Binding RunGACommand}" IsEnabled="{Binding IsRunningGA, Converter={StaticResource InvertBooleanConverter}}"
+                    Width="150" Content="Run Genetic"/>
         </StackPanel>
        
 

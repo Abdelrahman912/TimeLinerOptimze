@@ -9,7 +9,7 @@ namespace TimeLinerOptimze.Core.Loggers
 
         private readonly string _dirPath;
         private readonly string _fileName = "TimeLinerOptimizeLog";
-        private readonly IRepository<T> _repository;
+        private readonly IRepository _repository;
         private readonly string _fullPath;
 
         #endregion
@@ -21,7 +21,7 @@ namespace TimeLinerOptimze.Core.Loggers
         #region Constructors
 
         public CsvLogger(string dirPath,
-                         IRepository<T> repository)
+                         IRepository repository)
         {
             _dirPath = dirPath;
             _repository = repository;

@@ -8,9 +8,9 @@ using static TimeLinerOptimze.Core.Errors.Errors;
 
 namespace TimeLinerOptimze.Core.Repositories
 {
-    public class CsvRepository<T> : IRepository<T>
+    public class CsvRepository : IRepository
     {
-        public Task Append(T t, string filePath)
+        public Task Append<T>(T t, string filePath)
         {
             return Task.Run(() =>
              {
@@ -36,7 +36,7 @@ namespace TimeLinerOptimze.Core.Repositories
              });
         }
 
-        public Task<Validation<List<T>>> Read(string filePath)
+        public Task<Validation<List<T>>> Read<T>(string filePath)
         {
             return Task.Run(() =>
              {
@@ -58,7 +58,7 @@ namespace TimeLinerOptimze.Core.Repositories
              });
         }
 
-        public async Task<Validation<string>> Write(List<T> ts, string filePath)
+        public async Task<Validation<string>> Write<T>(List<T> ts, string filePath)
         {
             try
             {

@@ -3,10 +3,10 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace TimeLinerOptimze.Core.Repositories
 {
-    public interface IRepository<T>
+    public interface IRepository
     {
-        Task<Validation<List<T>>> Read(string filePath);
-        Task<Validation<string>> Write(List<T> ts,string filePath);
-        Task Append(T t, string filePath);
+        Task<Validation<List<T>>> Read<T>(string filePath);
+        Task<Validation<string>> Write<T>(List<T> ts,string filePath);
+        Task Append<T>(T t, string filePath);
     }
 }

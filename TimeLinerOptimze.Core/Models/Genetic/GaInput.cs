@@ -10,5 +10,10 @@ namespace TimeLinerOptimze.Core.Models.Genetic
     {
         public int PopulationNo { get; init; }
         public int GenerationNo { get; init; }
+        public GaInput()
+        {
+            PopulationNo = 1000;
+            GenerationNo = 100;
+        }
     }
 }
