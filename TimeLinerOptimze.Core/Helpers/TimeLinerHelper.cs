@@ -11,7 +11,7 @@ namespace TimeLinerOptimze.Core.Helpers
 
         public static Activity AsNewActivity(this Activity initial , ActivityOptimizeValue newValue, List<Activity> predecessors)
         {
-            var newDuration = (int)((initial.Duration * 1.0) / (newValue.UsedGroups));
+            var newDuration = (int)Math.Ceiling((initial.Duration * 1.0) / (newValue.UsedGroups));
             var newStart = new DateTime();
             var newEnd = new DateTime();    
             if(!predecessors.Any())

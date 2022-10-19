@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,6 +42,7 @@ namespace TimeLinerOptimize.App.ViewModels
             get => _isRunningGA;
             set => NotifyPropertyChanged(ref _isRunningGA, value);
         }
+      
 
         public bool IsLog
         {
@@ -99,13 +101,13 @@ namespace TimeLinerOptimize.App.ViewModels
             if (IsLog)
             {
                 var result = !(string.IsNullOrEmpty(InitialTimeLinePath) ||
-                          string.IsNullOrEmpty(OutputDirectory) || string.IsNullOrEmpty(LogDirectory));
+                          string.IsNullOrEmpty(OutputDirectory) || string.IsNullOrEmpty(LogDirectory) ||IsRunningGA);
                 return result;
             }
             else
             {
                 var result = !(string.IsNullOrEmpty(InitialTimeLinePath) ||
-                         string.IsNullOrEmpty(OutputDirectory));
+                         string.IsNullOrEmpty(OutputDirectory) || IsRunningGA);
                 return result;
             }
         }
@@ -114,7 +116,6 @@ namespace TimeLinerOptimize.App.ViewModels
 
         private async void OnRunGA()
         {
-            //var ga = new TimeLinerGA();
             try
             {
                 IsRunningGA = true;
@@ -123,9 +124,9 @@ namespace TimeLinerOptimize.App.ViewModels
                            from timeLines in dtos.Map(i => i.Select(dto => dto.AsActivity()).ToList().AsTimeLine()).Async()
                            from allLinesV in Task.Run(() => timeLines.Bind(timeLine => new TimeLinerGA(timeLine, new GaInput(), logger).RunGA()))
                            from bestThree in allLinesV.Map(allLines => new List<Tuple<string, TimeLine>>() { Tuple.Create("Optimized", allLines.OrderBy(l => l.TotalCost * l.TotalDuration).First()), Tuple.Create("Optimized For Cost", allLines.OrderBy(l => l.TotalCost).First()), Tuple.Create("Optimized For Duration", allLines.OrderBy(l => l.TotalDuration).First()) }).Async()
-                           from result in bestThree.TraverseBind( b3 =>  Task.WhenAll(b3.Select(tuple => _repository.Write(tuple.Item2.Activities.Select(a => a.AsDto()).ToList(), $"{OutputDirectory}\\{tuple.Item1}"))).Map(vs=>vs.TraverseHarvest(v=>v)))
+                           from result in bestThree.TraverseBind(b3 => Task.WhenAll(b3.Select(tuple => _repository.Write(tuple.Item2.Activities.Select(a => a.AsDto()).ToList(), $"{OutputDirectory}\\{tuple.Item1}.csv"))).Map(vs => vs.TraverseHarvest(v => v)))
                            select result.Match((errs) => MessageBox.Show(errs.First().Message), (_) => MessageBox.Show("Optimized TimeLines are saved successfully.")); ;
-                
+                await task;
                 IsRunningGA = false;
             }
             catch (Exception e)
